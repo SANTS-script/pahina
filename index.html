@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pahina // Relapse</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght=400;600&family=Playfair+Display:ital,wght=0,400;1,400&family=Quicksand:wght=400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght=500;700&family=Playfair+Display:ital,wght=0,500;1,500&family=Quicksand:wght=500;600&display=swap');
 
         body {
             margin: 0;
             padding: 0;
-            background: #0a0b10;
-            color: #e2e8f0;
+            background: #11141a;
+            color: #fdf6e2;
             font-family: 'Quicksand', sans-serif;
             display: flex;
             flex-direction: column;
@@ -22,11 +22,11 @@
             position: relative;
         }
 
-        /* Smooth Gatekeeper Splash Screen */
+        /* Eye-Safe Splash Screen */
         #gatekeeper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #06070a;
+            background: #0d0f14;
             z-index: 999;
             display: flex;
             flex-direction: column;
@@ -36,13 +36,13 @@
         }
 
         .enter-btn {
-            background: rgba(244, 63, 94, 0.1);
-            border: 1px solid #f43f5e;
-            color: #f43f5e;
-            padding: 16px 36px;
-            font-size: 0.95rem;
+            background: rgba(253, 246, 226, 0.05);
+            border: 2px solid #fdf6e2;
+            color: #fdf6e2;
+            padding: 16px 40px;
+            font-size: 1rem;
             font-family: 'Comfortaa', cursive;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -50,30 +50,29 @@
         }
 
         .enter-btn:hover {
-            background: #f43f5e;
-            color: #06070a;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+            background: #fdf6e2;
+            color: #11141a;
         }
 
         .hint-text {
-            font-size: 0.8rem;
-            color: #475569;
-            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #7c8594;
+            margin-top: 18px;
             letter-spacing: 1px;
         }
 
-        /* Book Workspace Container */
+        /* High-Contrast Reading Canvas */
         .book-container {
             position: relative;
             z-index: 2;
             width: 88%;
             max-width: 460px;
-            min-height: 440px;
+            min-height: 460px;
             padding: 2.5rem 2rem;
-            background: #11131c;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: #1a1d24;
+            border: 1px solid rgba(253, 246, 226, 0.1);
             border-radius: 16px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -83,35 +82,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(253, 246, 226, 0.1);
+            padding-bottom: 14px;
             margin-bottom: 1.5rem;
         }
 
         .chapter-tag {
             font-family: 'Comfortaa', cursive;
-            font-size: 0.8rem;
-            color: #f43f5e;
+            font-size: 0.9rem;
+            color: #ff8093;
+            font-weight: 700;
             letter-spacing: 1px;
         }
 
         .page-number {
-            font-size: 0.75rem;
-            color: #64748b;
+            font-size: 0.85rem;
+            color: #949eb0;
+            font-weight: 600;
         }
 
-        /* Message Display Window */
+        /* Text Display Area */
         .book-content {
             flex-grow: 1;
             display: flex;
             align-items: center;
-            min-height: 220px;
+            min-height: 240px;
         }
 
         .text-wrapper {
             width: 100%;
             opacity: 0;
-            transform: translateY(8px);
+            transform: translateY(6px);
             transition: all 0.4s ease-in-out;
         }
 
@@ -122,14 +123,14 @@
 
         .message-text {
             font-family: 'Playfair Display', serif;
-            font-size: 1.12rem;
+            font-size: 1.2rem;
             line-height: 1.8;
-            color: #f1f5f9;
+            color: #fdf6e2;
             white-space: pre-line;
             margin: 0;
         }
 
-        /* Eye-Friendly Navigation Buttons */
+        /* Nav Buttons */
         .book-footer {
             margin-top: 2rem;
             display: flex;
@@ -140,32 +141,33 @@
         }
 
         .flip-btn {
-            background: #1e2230;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #cbd5e1;
-            font-size: 0.9rem;
+            background: #282c37;
+            border: 1px solid rgba(253, 246, 226, 0.2);
+            color: #fdf6e2;
+            font-size: 0.95rem;
             font-family: 'Quicksand', sans-serif;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            padding: 12px 24px;
+            padding: 14px 24px;
             border-radius: 8px;
             width: 100%;
             text-align: center;
             transition: all 0.2s ease;
             box-sizing: border-box;
+            letter-spacing: 0.5px;
         }
 
         .flip-btn:hover {
-            background: #f43f5e;
-            color: #0a0b10;
-            border-color: #f43f5e;
+            background: #fdf6e2;
+            color: #1a1d24;
+            border-color: #fdf6e2;
         }
 
-        /* Permanent Loop Audio Strip */
+        /* Soundtrack Panel */
         .soundtrack-bar {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            padding: 10px 14px;
+            background: #11141a;
+            border: 1px solid rgba(253, 246, 226, 0.08);
+            padding: 12px 16px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -181,32 +183,32 @@
         }
 
         .track-status {
-            font-size: 0.65rem;
-            color: #f43f5e;
+            font-size: 0.7rem;
+            color: #ff8093;
             letter-spacing: 1px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .track-title {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            max-width: 210px;
+            font-size: 0.8rem;
+            color: #949eb0;
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
         audio {
-            height: 22px;
-            width: 95px;
-            opacity: 0.5;
+            height: 24px;
+            width: 100px;
+            opacity: 0.7;
         }
 
         .vignette {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 50%, #040508 98%);
+            background: radial-gradient(circle, transparent 60%, #0d0f14 98%);
             z-index: 1;
             pointer-events: none;
         }
@@ -224,7 +226,7 @@
     <div class="book-container">
         <div class="book-header">
             <div class="chapter-tag" id="chapterTag">Chapter I</div>
-            <div class="page-number" id="pageNumber">1 / 30</div>
+            <div class="page-number" id="pageNumber">1 / 35</div>
         </div>
 
         <div class="book-content">
@@ -248,11 +250,11 @@
 
     <script>
         const pages = [
-            { chapter: "Chapter I", text: "At first, I thought it was just a typical phase.\nThe standard withdrawal of a routine that cut off too quickly.\nI told myself I’d eventually get used to the quiet lines.\nI didn't know the silence would turn out to be this loud." },
+            { chapter: "Chapter I", text: "At first, I thought it was just a phase.\nThe typical withdrawal of a routine that cut off too quickly.\nI told myself I’d eventually get used to the quiet lines.\nI didn't know the silence would turn out to be this loud." },
             { chapter: "Chapter II", text: "I found your old hair tie under the passenger seat today.\nIt still holds a faint, haunting trace of how things used to be.\nI couldn't bring myself to throw it away.\nI just locked it in the glovebox—closer to me, further from recovery." },
             { chapter: "Chapter III", text: "You look so completely clean in your recent pictures.\nLike my absence didn’t leave a single mark or scratch on your skin.\nIt makes me wonder if I was just a ghost you temporarily lived with,\neasily pushed aside when your real morning came." },
             { chapter: "Chapter IV", text: "People keep saying time heals wounds.\nBut time is just making me an expert at pretending.\nI can talk through a whole dinner, laugh genuinely at a joke,\nand still be completely mourning your memory under the table." },
-            { chapter: "Chapter V", text: "I hate how my mind constantly formats old memories into burning questions.\nDid you mean it when you told me I was your home?\nOr was I just a convenient shelter while you waited out your own storm?" },
+            { chapter: "Chapter V", text: "I hate how my brain constantly formats old memories into burning questions.\nDid you mean it when you told me I was your home?\nOr was I just a convenient shelter while you waited out your own storm?" },
             { chapter: "Chapter VI", text: "It’s 3:00 AM, and my fingers are hovering over your chat head again.\nYou’re active right now.\nWho are you giving your late-night thoughts to?\nWho gets to hear the voice I used to fall asleep to?" },
             { chapter: "Chapter VII", text: "I caught myself driving to our old spot this afternoon.\nI sat at the exact table we used to playfully fight over.\nI ordered for one, but my eyes kept shifting to the empty chair across from me,\nwaiting for a presence I know is never coming back." },
             { chapter: "Chapter VIII", text: "I tried dating someone new last week.\nThey were incredibly kind, they looked at me with genuine care.\nBut when they reached out to hold my hand,\nall I could feel was how their fingers weren't yours.\nIt felt like a crime to let them try." },
@@ -273,11 +275,16 @@
             { chapter: "Chapter XXIII", text: "You left a book on my shelf half-read, with the page corner folded down.\nI haven't moved it. I haven't touched it.\nIt sits there, frozen in time, a permanent monument to the exact moment you decided you were done with our story." },
             { chapter: "Chapter XXIV", text: "Every song on the radio sounds like a personal attack now.\nEvery lyric about leaving, every melody about staying up late thinking of someone.\nJanine sings about missing someone for the rest of their life,\nand it feels like she read my chest open." },
             { chapter: "Chapter XXV", text: "I tried changing my room layout to erase the memory of you sitting on the edge of the bed.\nI moved the desk, flipped the sheets, painted the walls.\nBut the space still feels custom-shaped around your absence.\nYou can't redecorate a haunting." },
-            { chapter: "Chapter XXI", text: "I woke up from a dream where we were completely fine.\nWe were just walking down the street, holding hands like nothing ever broke.\nThe transition back to reality when my eyes opened was so violent,\nit felt like falling off a building." },
+            { chapter: "Chapter XXVI", text: "I woke up from a dream where we were completely fine.\nWe were just walking down the street, holding hands like nothing ever broke.\nThe transition back to reality when my eyes opened was so violent,\nit felt like falling off a building." },
             { chapter: "Chapter XXVII", text: "Are you building a home with someone else now?\nAre you giving them the soft version of yourself that I spent months trying to bring out?\nIt kills me that my destruction was the price you had to pay to become whole for someone else." },
             { chapter: "Chapter XXVIII", text: "I still have your birthday saved as an emergency passcode for an old account.\nI went to change it today, but my fingers froze over the keyboard.\nEven my muscle memory refuses to let you go." },
             { chapter: "Chapter XXIX", text: "If you called me right now, screaming that you made a mistake,\nI would drop everything and run back to you.\nEven knowing how it ends. Even knowing how much it burns.\nThat is my absolute downfall: I still prefer your wreckage over my own safety." },
-            { chapter: "Chapter XXX", text: "We are at the end of the pages, but the loop never stops.\nI will close this website, lock my phone, go to sleep, and wake up to do it all over again.\nYou aren't just a chapter anymore.\nYou became the entire book." }
+            { chapter: "Chapter XXX", text: "We are at the end of the pages, but the loop never stops.\nI will close this website, lock my phone, go to sleep, and wake up to do it all over again.\nYou aren't just a chapter anymore.\nYou became the entire book." },
+            { chapter: "Chapter XXXI", text: "I delete my paragraphs in the text box before hitting send.\nIt's a daily ritual of saving myself from the embarrassment of your unbothered 'seen.'\nI write novels for you, but you only deserve my silence now." },
+            { chapter: "Chapter XXXII", text: "Your friends still view my stories occasionally.\nI wonder if they report back to you. I wonder if you ask about me.\nOr if I am just a random name passing through their screens, completely divorced from your current life." },
+            { chapter: "Chapter XXXIII", text: "I rewatched that movie you hated.\nI laughed at the parts you found boring, just to see if I could feel separate from you.\nBut even my disagreement with your taste feels like an intimate conversation we are no longer having." },
+            { chapter: "Chapter XXXIV", text: "There is an old shirt of yours sitting at the bottom of my laundry basket.\nIt doesn't smell like you anymore—just dust and laundry soap.\nThe loss of your scent hurts more than the presence of the fabric." },
+            { chapter: "Chapter XXXV", text: "Fifty pages turned down to thirty-five, bleeding quietly into the dark.\nJanine's song loops again, and my mind follows the exact same track.\nIf this is how it ends, then let it be.\nI will love you in the quiet, I will miss you in the relapse, for the rest of my life." }
         ];
 
         let currentPage = 0;
