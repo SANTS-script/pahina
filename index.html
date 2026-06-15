@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pahina // Relapse</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght=400;600&family=Playfair+Display:ital,wght=0,400;1,400&family=Quicksand:wght=400;500&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0b10;
+            color: #e2e8f0;
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Smooth Gatekeeper Splash Screen */
+        #gatekeeper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #06070a;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .enter-btn {
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid #f43f5e;
+            color: #f43f5e;
+            padding: 16px 36px;
+            font-size: 0.95rem;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+
+        .enter-btn:hover {
+            background: #f43f5e;
+            color: #06070a;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+        }
+
+        .hint-text {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* Book Workspace Container */
+        .book-container {
+            position: relative;
+            z-index: 2;
+            width: 88%;
+            max-width: 460px;
+            min-height: 440px;
+            padding: 2.5rem 2rem;
+            background: #11131c;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .book-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-tag {
+            font-family: 'Comfortaa', cursive;
+            font-size: 0.8rem;
+            color: #f43f5e;
+            letter-spacing: 1px;
+        }
+
+        .page-number {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Message Display Window */
+        .book-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            min-height: 220px;
+        }
+
+        .text-wrapper {
+            width: 100%;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.4s ease-in-out;
+        }
+
+        .text-wrapper.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #f1f5f9;
+            white-space: pre-line;
+            margin: 0;
+        }
+
+        /* Eye-Friendly Navigation Buttons */
+        .book-footer {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .flip-btn {
+            background: #1e2230;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .flip-btn:hover {
+            background: #f43f5e;
+            color: #0a0b10;
+            border-color: #f43f5e;
+        }
+
+        /* Permanent Loop Audio Strip */
+        .soundtrack-bar {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .track-status {
+            font-size: 0.65rem;
+            color: #f43f5e;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .track-title {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            max-width: 210px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        audio {
+            height: 22px;
+            width: 95px;
+            opacity: 0.5;
+        }
+
+        .vignette {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 50%, #040508 98%);
+            z-index: 1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gatekeeper">
+        <button class="enter-btn" onclick="openBook()">Open Book</button>
+        <div class="hint-text">Plug in earphones for full immersion.</div>
+    </div>
+
+    <div class="vignette"></div>
+
+    <div class="book-container">
+        <div class="book-header">
+            <div class="chapter-tag" id="chapterTag">Chapter I</div>
+            <div class="page-number" id="pageNumber">1 / 15</div>
+        </div>
+
+        <div class="book-content">
+            <div class="text-wrapper" id="textWrapper">
+                <p class="message-text" id="messageDisplay">Loading pages...</p>
+            </div>
+        </div>
+
+        <div class="book-footer">
+            <button class="flip-btn" id="flipBtn" onclick="nextPage()">Turn the page →</button>
+
+            <div class="soundtrack-bar">
+                <div class="track-info">
+                    <span class="track-status">🔂 LOOPING SOUNDTRACK</span>
+                    <span class="track-title">What if I miss you for the rest of my life</span>
+                </div>
+                <!-- Points to local file in the pahina-project repo -->
+                <audio id="loopPlayer" src="music/JANINE.mp3" loop></audio>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pages = [
+            { chapter: "Chapter I", text: "At first, I thought it was just a typical phase.\nThe standard withdrawal of a routine that cut off too quickly.\nI told myself I’d eventually get used to the quiet lines.\nI didn't know the silence would turn out to be this loud." },
+            { chapter: "Chapter II", text: "I found your old hair tie under the passenger seat today.\nIt still holds a faint, haunting trace of how things used to be.\nI couldn't bring myself to throw it away.\nI just locked it in the glovebox—closer to me, further from recovery." },
+            { chapter: "Chapter III", text: "You look so completely clean in your recent pictures.\nLike my absence didn’t leave a single mark or scratch on your skin.\nIt makes me wonder if I was just a ghost you temporarily lived with,\neasily pushed aside when your real morning came." },
+            { chapter: "Chapter IV", text: "People keep saying time heals wounds.\nBut time is just making me an expert at pretending.\nI can talk through a whole dinner, laugh genuinely at a joke,\nand still be completely mourning your memory under the table." },
+            { chapter: "Chapter V", text: "I hate how my mind constantly formats old memories into burning questions.\nDid you mean it when you told me I was your home?\nOr was I just a convenient shelter while you waited out your own storm?" },
+            { chapter: "Chapter VI", text: "It’s 3:00 AM, and my fingers are hovering over your chat head again.\nYou’re active right now.\nWho are you giving your late-night thoughts to?\nWho gets to hear the voice I used to fall asleep to?" },
+            { chapter: "Chapter VII", text: "I caught myself driving to our old spot this afternoon.\nI sat at the exact table we used to playfully fight over.\nI ordered for one, but my eyes kept shifting to the empty chair across from me,\nwaiting for a presence I know is never coming back." },
+            { chapter: "Chapter VIII", text: "I tried dating someone new last week.\nThey were incredibly kind, they looked at me with genuine care.\nBut when they reached out to hold my hand,\nall I could feel was how their fingers weren't yours.\nIt felt like a crime to let them try." },
+            { chapter: "Chapter IX", text: "They ask me why I'm still heavily stuck in this place.\nThey don't understand that forgetting you means completely killing a version of myself\nthat was actually happy.\nAnd I don't know how to exist without that version." },
+            { chapter: "Chapter X", text: "The terrifying part isn’t that I miss you right now at this second.\nIt’s the sudden, heavy realization that this might be my permanent state.\nWhat if this ache doesn’t have an expiration date?\nWhat if I am formatted to be broken like this forever?" },
+            { chapter: "Chapter XI", text: "I found an old text draft I wrote the night you walked away.\nIt just said, 'Please stay, even if it hurts.'\nIt's pathetic how even after everything you put me through,\nmy heart would still choose your chaos over anyone else's absolute peace." },
+            { chapter: "Chapter XII", text: "You’ve completely moved on, haven't you?\nYou don't stop yourself from laughing when our jokes come up.\nYou don't look at old folders.\nYou completely forgot the person who would have torn down their own walls just to keep you safe." },
+            { chapter: "Chapter XIII", text: "Sometimes I look at the clock and instinctively calculate where you are.\nProbably at work, probably driving home, probably sleeping.\nMy mind is still tracking a life I am no longer allowed to be a part of.\nI am an uninvited spectator to your existence." },
+            { chapter: "Chapter XIV", text: "So this is my final confession to an empty, quiet room:\nI am still terrified of the future because you aren't in it.\nAnd the cruelest truth I have to live with every single day...\nis knowing that what if I actually miss you for the rest of my life?" },
+            { chapter: "Chapter XV", text: "The book closes here, but the thoughts don't.\nYou are the line I can't erase, the relapse I keep welcoming back.\nEven if you never read this, even if you never remember...\nYou are the ghost I'll keep chasing until the ink runs dry." }
+        ];
+
+        let currentPage = 0;
+
+        document.getElementById('messageDisplay').innerText = pages[0].text;
+        document.getElementById('textWrapper').classList.add('active');
+
+        function openBook() {
+            const gatekeeper = document.getElementById('gatekeeper');
+            const loopPlayer = document.getElementById('loopPlayer');
+            
+            if (loopPlayer) {
+                loopPlayer.play().then(() => {
+                    gatekeeper.style.opacity = '0';
+                    setTimeout(() => gatekeeper.style.display = 'none', 1000);
+                }).catch(() => {
+                    gatekeeper.style.display = 'none';
+                });
+            }
+        }
+
+        function nextPage() {
+            const wrapper = document.getElementById('textWrapper');
+            const chapterTag = document.getElementById('chapterTag');
+            const pageNumber = document.getElementById('pageNumber');
+            const messageDisplay = document.getElementById('messageDisplay');
+            const flipBtn = document.getElementById('flipBtn');
+
+            currentPage++;
+
+            if (currentPage >= pages.length) {
+                currentPage = 0;
+            }
+
+            wrapper.classList.remove('active');
+
+            setTimeout(() => {
+                const data = pages[currentPage];
+                chapterTag.innerText = data.chapter;
+                pageNumber.innerText = `${currentPage + 1} / ${pages.length}`;
+                messageDisplay.innerText = data.text;
+
+                wrapper.classList.add('active');
+
+                if (currentPage === pages.length - 1) {
+                    flipBtn.innerHTML = "Reopen the pages ↺";
+                } else {
+                    flipBtn.innerHTML = "Turn the page →";
+                }
+            }, 400);
+        }
+    </script>
+</body>
+</html>
