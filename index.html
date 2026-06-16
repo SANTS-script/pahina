@@ -1,3 +1,4 @@
+cat << 'EOF' > ~/pahina-project/index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,442 +6,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pahina // Relapse</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght=0,400;1,400&family=Plus+Jakarta+Sans:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Playfair+Display:ital,wght=0,400;1,400&family=Plus+Jakarta+Sans:wght=400;600&display=swap');
 
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0b0d11;
-            color: #fdf6e2;
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #06080b; color: #fdf6e2;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
         }
 
-        /* Cinematic Background Atmosphere & Particle Layer */
         .vignette {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 30%, #06070a 100%);
-            z-index: 1;
-            pointer-events: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, #030406 100%);
+            z-index: 4; pointer-events: none;
+            animation: atmosphericPulse 8s ease-in-out infinite;
         }
 
-        #particleCanvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.4;
+        .screen-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 5; pointer-events: none; opacity: 0.45;
         }
 
-        /* Fluid Splash Screen Gatekeeper */
+        #ambientCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+
         #gatekeeper {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #06070a;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 1.4s cubic-bezier(0.25, 1, 0.5, 1), transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040507; z-index: 999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1.6s cubic-bezier(0.25, 1, 0.5, 1), transform 1.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .enter-btn {
-            background: transparent;
-            border: 1px solid rgba(253, 246, 226, 0.2);
-            color: #fdf6e2;
-            padding: 18px 45px;
-            font-size: 0.9rem;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 4px;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-            z-index: 2;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            background: transparent; border: 1px solid rgba(253, 246, 226, 0.15); color: #fdf6e2;
+            padding: 20px 50px; font-size: 0.85rem; font-family: 'Cinzel', serif; letter-spacing: 6px;
+            border-radius: 2px; cursor: pointer; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .enter-btn:hover {
-            border-color: #fdf6e2;
-            background: rgba(253, 246, 226, 0.04);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(253, 246, 226, 0.05);
+            border-color: #ff758f; background: rgba(255, 117, 143, 0.03);
+            transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255, 117, 143, 0.1); letter-spacing: 8px;
         }
 
         .hint-text {
-            font-size: 0.75rem;
-            color: #4a525e;
-            margin-top: 24px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: breathe 3s ease-in-out infinite;
+            font-size: 0.7rem; color: #3f4652; margin-top: 28px; letter-spacing: 3px;
+            text-transform: uppercase; animation: textBreathe 4s ease-in-out infinite;
         }
 
-        /* Modern, Floating Journal Canvas */
         .journal-canvas {
-            position: relative;
-            z-index: 2;
-            width: 85%;
-            max-width: 500px;
-            min-height: 520px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-            opacity: 0;
-            transform: scale(0.98);
-            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; z-index: 3; width: 85%; max-width: 480px; min-height: 500px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 10px;
+            box-sizing: border-box; opacity: 0; transform: translateY(20px) scale(0.97);
+            transition: all 2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .journal-canvas.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .journal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .meta-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .chapter-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            color: #ff758f;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            animation: emberGlow 4s ease-in-out infinite;
-        }
-
-        .page-counter {
-            font-size: 0.75rem;
-            color: #626b7a;
-            letter-spacing: 1px;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        /* Pulsing Audio Indicator */
+        .journal-canvas.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .journal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(253, 246, 226, 0.03); padding-bottom: 20px; }
+        .meta-group { display: flex; flex-direction: column; gap: 6px; }
+        .chapter-title { font-family: 'Cinzel', serif; font-size: 0.95rem; color: #ff758f; letter-spacing: 4px; text-transform: uppercase; animation: emberPulse 5s ease-in-out infinite; }
+        .page-counter { font-size: 0.75rem; color: #555e6b; letter-spacing: 2px; font-weight: 600; }
+        
         .audio-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(253, 246, 226, 0.02);
-            border: 1px solid rgba(253, 246, 226, 0.06);
-            padding: 6px 12px;
-            border-radius: 20px;
+            display: flex; align-items: center; gap: 10px; background: rgba(255, 117, 143, 0.02);
+            border: 1px solid rgba(255, 117, 143, 0.08); padding: 6px 14px; border-radius: 30px; transition: all 0.4s ease;
         }
+        .audio-status:hover { background: rgba(255, 117, 143, 0.05); border-color: rgba(255, 117, 143, 0.2); }
+        .pulse-dot { width: 5px; height: 5px; background: #ff758f; border-radius: 50%; animation: ringGlow 1.8s infinite; }
+        .audio-label { font-size: 0.6rem; color: #838e9e; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
 
-        .pulse-dot {
-            width: 6px;
-            height: 6px;
-            background: #ff758f;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        .audio-label {
-            font-size: 0.65rem;
-            color: #8c96a6;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        /* Typography & Smooth Text Transitions */
-        .journal-body {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            padding: 40px 0;
-        }
-
+        .journal-body { flex-grow: 1; display: flex; align-items: center; padding: 50px 0; }
         .text-stream {
-            width: 100%;
-            opacity: 0;
-            transform: translateY(15px) scale(0.99);
-            filter: blur(4px);
-            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), 
-                        transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
-                        filter 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 100%; opacity: 0; transform: translateY(20px); filter: blur(6px);
+            transition: opacity 0.85s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.85s cubic-bezier(0.215, 0.610, 0.355, 1), filter 0.85s cubic-bezier(0.215, 0.610, 0.355, 1);
         }
+        .text-stream.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .poem-line { font-family: 'Playfair Display', serif; font-size: 1.3rem; line-height: 1.9; color: #fdf6e2; white-space: pre-line; margin: 0; text-shadow: 0 0 25px rgba(253, 246, 226, 0.05); }
 
-        .text-stream.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-        }
-
-        .poem-line {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.35rem;
-            line-height: 1.9;
-            color: #fdf6e2;
-            letter-spacing: 0.2px;
-            white-space: pre-line;
-            margin: 0;
-        }
-
-        /* Borderless Button Physics */
-        .journal-footer {
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-        }
-
+        .journal-footer { display: flex; justify-content: center; border-top: 1px solid rgba(253, 246, 226, 0.03); padding-top: 20px; }
         .action-btn {
-            background: rgba(253, 246, 226, 0.01);
-            border: 1px solid rgba(253, 246, 226, 0.08);
-            color: #8c96a6;
-            font-size: 0.85rem;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            padding: 16px 0;
-            width: 100%;
-            border-radius: 6px;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            background: transparent; border: 1px solid rgba(253, 246, 226, 0.05); color: #717b8a;
+            font-size: 0.8rem; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; letter-spacing: 3px;
+            text-transform: uppercase; cursor: pointer; padding: 16px 0; width: 100%; border-radius: 4px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .action-btn:hover { color: #fdf6e2; background: rgba(253, 246, 226, 0.02); border-color: rgba(253, 246, 226, 0.15); letter-spacing: 4px; box-shadow: inset 0 0 15px rgba(253, 246, 226, 0.02); }
 
-        .action-btn:hover {
-            color: #fdf6e2;
-            background: rgba(253, 246, 226, 0.04);
-            border-color: rgba(253, 246, 226, 0.2);
-            letter-spacing: 3px;
-        }
-
-        /* Advanced Core Animations */
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0.5); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 117, 143, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0); }
-        }
-
-        @keyframes breathe {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-        }
-
-        @keyframes emberGlow {
-            0%, 100% { text-shadow: 0 0 8px rgba(255, 117, 143, 0.15); opacity: 0.85; }
-            50% { text-shadow: 0 0 18px rgba(255, 117, 143, 0.4); opacity: 1; }
-        }
-
+        @keyframes ringGlow { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0.6); } 70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255, 117, 143, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0); } }
+        @keyframes textBreathe { 0%, 100% { opacity: 0.3; transform: scale(0.98); } 50% { opacity: 0.7; transform: scale(1); } }
+        @keyframes emberPulse { 0%, 100% { text-shadow: 0 0 10px rgba(255, 117, 143, 0.1); opacity: 0.8; letter-spacing: 4px; } 50% { text-shadow: 0 0 20px rgba(255, 117, 143, 0.35); opacity: 1; letter-spacing: 4.5px; } }
+        @keyframes atmosphericPulse { 0%, 100% { background: radial-gradient(circle, transparent 25%, #030406 100%); } 50% { background: radial-gradient(circle, transparent 18%, #030406 102%); } }
         audio { display: none; }
     </style>
 </head>
 <body>
-
-    <div id="gatekeeper">
-        <button class="enter-btn" onclick="openBook()">Open Pages</button>
-        <div class="hint-text">Audio recommended</div>
-    </div>
-
-    <div class="vignette"></div>
-    <canvas id="particleCanvas"></canvas>
-
+    <div id="gatekeeper"><button class="enter-btn" onclick="openBook()">Open Pages</button><div class="hint-text">Audio recommended</div></div>
+    <div class="vignette"></div><div class="screen-overlay"></div><canvas id="ambientCanvas"></canvas>
     <div class="journal-canvas" id="canvasFrame">
         <div class="journal-header">
-            <div class="meta-group">
-                <div class="chapter-title" id="chapterTag">Chapter I</div>
-                <div class="page-counter" id="pageNumber">1 // 35</div>
-            </div>
-            <div class="audio-status">
-                <div class="pulse-dot"></div>
-                <div class="audio-label">Janine loop</div>
-            </div>
+            <div class="meta-group"><div class="chapter-title" id="chapterTag">Chapter I</div><div class="page-counter" id="pageNumber">1 // 35</div></div>
+            <div class="audio-status"><div class="pulse-dot"></div><div class="audio-label">Janine loop</div></div>
         </div>
-
-        <div class="journal-body">
-            <div class="text-stream" id="textWrapper">
-                <p class="poem-line" id="messageDisplay">Loading...</p>
-            </div>
-        </div>
-
-        <div class="journal-footer">
-            <button class="action-btn" id="flipBtn" onclick="nextPage()">Next Page —</button>
-            <audio id="loopPlayer" src="music/JANINE.mp3" loop></audio>
-        </div>
+        <div class="journal-body"><div class="text-stream" id="textWrapper"><p class="poem-line" id="messageDisplay">Loading...</p></div></div>
+        <div class="journal-footer"><button class="action-btn" id="flipBtn" onclick="nextPage()">Next Page —</button><audio id="loopPlayer" src="music/JANINE.mp3" loop></audio></div>
     </div>
-
     <script>
-        const pages = [
-            { chapter: "Chapter I", text: "At first, I thought it was just a phase.\nThe typical withdrawal of a routine that cut off too quickly.\nI told myself I’d eventually get used to the quiet lines.\nI didn't know the silence would turn out to be this loud." },
-            { chapter: "Chapter II", text: "I found your old hair tie under the passenger seat today.\nIt still holds a faint, haunting trace of how things used to be.\nI couldn't bring myself to throw it away.\nI just locked it in the glovebox—closer to me, further from recovery." },
-            { chapter: "Chapter III", text: "You look so completely clean in your recent pictures.\nLike my absence didn’t leave a single mark or scratch on your skin.\nIt makes me wonder if I was just a ghost you temporarily lived with,\neasily pushed aside when your real morning came." },
-            { chapter: "Chapter IV", text: "People keep saying time heals wounds.\nBut time is just making me an expert at pretending.\nI can talk through a whole dinner, laugh genuinely at a joke,\nand still be completely mourning your memory under the table." },
-            { chapter: "Chapter V", text: "I hate how my brain constantly formats old memories into burning questions.\nDid you mean it when you told me I was your home?\nOr was I just a convenient shelter while you waited out your own storm?" },
-            { chapter: "Chapter VI", text: "It’s 3:00 AM, and my fingers are hovering over your chat head again.\nYou’re active right now.\nWho are you giving your late-night thoughts to?\nWho gets to hear the voice I used to fall asleep to?" },
-            { chapter: "Chapter VII", text: "I caught myself driving to our old spot this afternoon.\nI sat at the exact table we used to playfully fight over.\nI ordered for one, but my eyes kept shifting to the empty chair across from me,\nwaiting for a presence I know is never coming back." },
-            { chapter: "Chapter VIII", text: "I tried dating someone new last week.\nThey were incredibly kind, they looked at me with genuine care.\nBut when they reached out to hold my hand,\nall I could feel was how their fingers weren't yours.\nIt felt like a crime to let them try." },
-            { chapter: "Chapter IX", text: "They ask me why I'm still heavily stuck in this place.\nThey don't understand that forgetting you means completely killing a version of myself\nthat was actually happy.\nAnd I don't know how to exist without that version." },
-            { chapter: "Chapter X", text: "The terrifying part isn’t that I miss you right now at this second.\nIt’s the sudden, heavy realization that this might be my permanent state.\nWhat if this ache doesn’t have an expiration date?\nWhat if I am formatted to be broken like this forever?" },
-            { chapter: "Chapter XI", text: "I found an old text draft I wrote the night you walked away.\nIt just said, 'Please stay, even if it hurts.'\nIt's pathetic how even after everything you put me through,\nmy heart would still choose your chaos over anyone else's absolute peace." },
-            { chapter: "Chapter XII", text: "You’ve completely moved on, haven't you?\nYou don't stop yourself from laughing when our jokes come up.\nYou don't look at old folders.\nYou completely forgot the person who would have torn down their own walls just to keep you safe." },
-            { chapter: "Chapter XIII", text: "Sometimes I look at the clock and instinctively calculate where you are.\nProbably at work, probably driving home, probably sleeping.\nMy mind is still tracking a life I am no longer allowed to be a part of.\nI am an uninvited spectator to your existence." },
-            { chapter: "Chapter XIV", text: "So this is my final confession to an empty, quiet room:\nI am still terrified of the future because you aren't in it.\nAnd the cruelest truth I have to live with every single day...\nis knowing that what if I actually miss you for the rest of my life?" },
-            { chapter: "Chapter XV", text: "The book closes here, but the thoughts don't.\nYou are the line I can't erase, the relapse I keep welcoming back.\nEven if you never read this, even if you never remember...\nYou are the ghost I'll keep chasing until the ink runs dry." },
-            { chapter: "Chapter XVI", text: "I unblocked your number today just to see your display photo.\nYou look happier. Your smile doesn’t have that heavy tiredness it had when you were trying to fix me.\nI guess I was the anchor dragging down your ship all along." },
-            { chapter: "Chapter XVII", text: "I went to buy groceries and automatically picked up your favorite flavor of chips.\nI walked halfway to the counter before realizing there's no one waiting at home to share them with.\nI put them back on the shelf, feeling like a stranger in my own skin." },
-            { chapter: "Chapter XVIII", text: "Do you ever accidentally say my name?\nOr has your mouth completely unlearned the shape of it?\nBecause every conversation I have feels like an exercise in avoiding topics that lead back to you." },
-            { chapter: "Chapter XIX", text: "The hardest part isn’t losing the big plans we made.\nIt’s losing the small, stupid things.\nThe inside jokes no one else will ever get, the bad impressions we laughed at.\nI am left with an entire language that only you and I spoke, and no one left to talk to." },
-            { chapter: "Chapter XX", text: "I saw someone on the street today who had the exact same jacket you wore on our first anniversary.\nMy heart stopped for a full three seconds.\nI almost ran through the crowd just to check.\nWhen they turned around, it was a complete stranger. The disappointment felt like breaking all over again." },
-            { chapter: "Chapter XXI", text: "My gallery suggested a 'One Year Ago Today' memory slice.\nIt was a video of you laughing while trying to cook dinner.\nYou looked into the camera and said you’d love me forever.\nI want to delete it, but it's the only proof I have left that you actually existed in my life." },
-            { chapter: "Chapter XXII", text: "I wonder if you talk about me to your new friends.\nAm I the 'toxic ex' in your story, or am I just the one you don't even bother mentioning?\nI don't know which title hurts worse." },
-            { chapter: "Chapter XXIII", text: "You left a book on my shelf half-read, with the page corner folded down.\nI haven't moved it. I haven't touched it.\nIt sits there, frozen in time, a permanent monument to the exact moment you decided you were done with our story." },
-            { chapter: "Chapter XXIV", text: "Every song on the radio sounds like a personal attack now.\nEvery lyric about leaving, every melody about staying up late thinking of someone.\nJanine sings about missing someone for the rest of their life,\nand it feels like she read my chest open." },
-            { chapter: "Chapter XXV", text: "I tried changing my room layout to erase the memory of you sitting on the edge of the bed.\nI moved the desk, flipped the sheets, painted the walls.\nBut the space still feels custom-shaped around your absence.\nYou can't redecorate a haunting." },
-            { chapter: "Chapter XXVI", text: "I woke up from a dream where we were completely fine.\nWe were just walking down the street, holding hands like nothing ever broke.\nThe transition back to reality when my eyes opened was so violent,\nit felt like falling off a building." },
-            { chapter: "Chapter XXVII", text: "Are you building a home with someone else now?\nAre you giving them the soft version of yourself that I spent months trying to bring out?\nIt kills me that my destruction was the price you had to pay to become whole for someone else." },
-            { chapter: "Chapter XXVIII", text: "I still have your birthday saved as an emergency passcode for an old account.\nI went to change it today, but my fingers froze over the keyboard.\nEven my muscle memory refuses to let you go." },
-            { chapter: "Chapter XXIX", text: "If you called me right now, screaming that you made a mistake,\nI would drop everything and run back to you.\nEven knowing how it ends. Even knowing how much it burns.\nThat is my absolute downfall: I still prefer your wreckage over my own safety." },
-            { chapter: "Chapter XXX", text: "We are at the end of the pages, but the loop never stops.\nI will close this website, lock my phone, go to sleep, and wake up to do it all over again.\nYou aren't just a chapter anymore.\nYou became the entire book." },
-            { chapter: "Chapter XXXI", text: "I delete my paragraphs in the text box before hitting send.\nIt's a daily ritual of saving myself from the embarrassment of your unbothered 'seen.'\nI write novels for you, but you only deserve my silence now." },
-            { chapter: "Chapter XXXII", text: "Your friends still view my stories occasionally.\nI wonder if they report back to you. I wonder if you ask about me.\nOr if I am just a random name passing through their screens, completely divorced from your current life." },
-            { chapter: "Chapter XXXIII", text: "I rewatched that movie you hated.\nI laughed at the parts you found boring, just to see if I could feel separate from you.\nBut even my disagreement with your taste feels like an intimate conversation we are no longer having." },
-            { chapter: "Chapter XXXIV", text: "There is an old shirt of yours sitting at the bottom of my laundry basket.\nIt doesn't smell like you anymore—just dust and laundry soap.\nThe loss of your scent hurts more than the presence of the fabric." },
-            { chapter: "Chapter XXXV", text: "Thirty-five pages turned down, bleeding quietly into the dark.\nJanine's song loops again, and my mind follows the exact same track.\nIf this is how it ends, then let it be.\nI will love you in the quiet, I will miss you in the relapse, for the rest of my life." }
-        ];
-
-       let currentPage = 0;
-
-        document.getElementById('messageDisplay').innerText = pages[0].text;
-        document.getElementById('textWrapper').classList.add('active');
-
-        // Atmospheric Particle System
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
+        let currentPage = 0;
+        const canvas = document.getElementById('ambientCanvas'); const ctx = canvas.getContext('2d'); let particles = []; let mouse = { x: null, y: null, radius: 90 };
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }); window.addEventListener('touchmove', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+        window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; }); window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
         resizeCanvas();
-
         class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height + canvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedY = -(Math.random() * 0.4 + 0.1);
-                this.opacity = Math.random() * 0.5 + 0.1;
-            }
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.6 + 0.4; this.density = (Math.random() * 15) + 2; this.opacity = Math.random() * 0.4 + 0.05; this.speedY = -(Math.random() * 0.3 + 0.05); }
             update() {
-                this.y += this.speedY;
-                if (this.y < 0) {
-                    this.y = canvas.height;
-                    this.x = Math.random() * canvas.width;
+                this.y += this.speedY; if (this.y < 0) this.y = canvas.height;
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= (dx / distance) * force * this.density; this.y -= (dy / distance) * force * this.density;
+                    }
                 }
             }
-            draw() {
-                ctx.fillStyle = `rgba(253, 246, 226, ${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            draw() { ctx.fillStyle = `rgba(253, 246, 226, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
-
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 40; i++) {
-                particles.push(new Particle())
-
-}
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        initParticles();
-        animateParticles();
-
-        // Control Entry View Transitions
-        function openBook() {
-            const gatekeeper = document.getElementById('gatekeeper');
-            const canvasFrame = document.getElementById('canvasFrame');
-            const loopPlayer = document.getElementById('loopPlayer');
-            
-            if (loopPlayer) {
-                loopPlayer.play().then(() => {
-                    gatekeeper.style.opacity = '0';
-                    gatekeeper.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        gatekeeper.style.display = 'none';
-                        canvasFrame.classList.add('visible');
-                    }, 1400);
-                }).catch(() => {
-                    gatekeeper.style.display = 'none';
-                    canvasFrame.classList.add('visible');
-                });
-            }
-        }
-
-        // Kinetic Page Navigation
+        function initParticles() { for (let i = 0; i < 65; i++) { particles.push(new Particle()); } }
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        initParticles(); animateParticles();
+        function openBook() { const g = document.getElementById('gatekeeper'); const cf = document.getElementById('canvasFrame'); const lp = document.getElementById('loopPlayer'); if (lp) { lp.play().then(() => { g.style.opacity = '0'; g.style.transform = 'scale(1.04)'; setTimeout(() => { g.style.display = 'none'; cf.classList.add('visible'); }, 1600); }).catch(() => { g.style.display = 'none'; cf.classList.add('visible'); }); } }
         function nextPage() {
-            const wrapper = document.getElementById('textWrapper');
-            const chapterTag = document.getElementById('chapterTag');
-            const pageNumber = document.getElementById('pageNumber');
-            const messageDisplay = document.getElementById('messageDisplay');
-            const flipBtn = document.getElementById('flipBtn');
-
-currentPage++;
-
-            if (currentPage >= pages.length) {
-                currentPage = 0;
-            }
-
-            // Drop down and blur out old scene
-            wrapper.style.transform = 'translateY(-15px) scale(0.98)';
-            wrapper.style.filter = 'blur(4px)';
-            wrapper.classList.remove('active');
-
+            const wrapper = document.getElementById('textWrapper'); const chapterTag = document.getElementById('chapterTag'); const pageNumber = document.getElementById('pageNumber'); const messageDisplay = document.getElementById('messageDisplay'); const flipBtn = document.getElementById('flipBtn');
+            currentPage++; if (currentPage >= pages.length) { currentPage = 0; }
+            wrapper.style.transform = 'translateY(-12px)'; wrapper.style.filter = 'blur(5px)'; wrapper.classList.remove('active');
             setTimeout(() => {
-                const data = pages[currentPage];
-                chapterTag.innerText = data.chapter;
-                pageNumber.innerText = `${currentPage + 1} // ${pages.length}`;
-                messageDisplay.innerText = data.text;
-
-                // Return to position from below
-                wrapper.style.transform = 'translateY(15px) scale(0.99)';
-                
-                // Trigger reflow execution for css animation catch
-                void wrapper.offsetWidth;
-
-                wrapper.classList.add('active');
-                wrapper.style.transform = 'translateY(0) scale(1)';
-                wrapper.style.filter = 'blur(0)';
-
-                if (currentPage === pages.length - 1) {
-                    flipBtn.innerHTML = "Reopen the pages ↺";
-                } else {
-                    flipBtn.innerHTML = "Next Page —";
-                }
-            }, 700);
+                const data = pages[currentPage]; chapterTag.innerText = data.chapter; pageNumber.innerText = `${currentPage + 1} // ${pages.length}`; messageDisplay.innerText = data.text;
+                wrapper.style.transform = 'translateY(12px)'; void wrapper.offsetWidth; wrapper.classList.add('active'); wrapper.style.transform = 'translateY(0)'; wrapper.style.filter = 'blur(0)';
+                if (currentPage === pages.length - 1) { flipBtn.innerHTML = "Reopen the pages ↺"; } else { flipBtn.innerHTML = "Next Page —"; }
+            }, 650);
         }
     </script>
 </body>
 </html>
+EOF
+
+cat << 'EOF' >> ~/pahina-project/index.html
+<script>
+const pages = [
+    { chapter: "Chapter I", text: "At first, I thought it was just a phase.\nThe typical withdrawal of a routine that cut off too quickly.\nI told myself I’d eventually get used to the quiet lines.\nI didn't know the silence would turn out to be this loud." },
+    { chapter: "Chapter II", text: "I found your old hair tie under the passenger seat today.\nIt still holds a faint, haunting trace of how things used to be.\nI couldn't bring myself to throw it away.\nI just locked it in the glovebox—closer to me, further from recovery." },
+    { chapter: "Chapter III", text: "You look so completely clean in your recent pictures.\nLike my absence didn’t leave a single mark or scratch on your skin.\nIt makes me wonder if I was just a ghost you temporarily lived with,\neasily pushed aside when your real morning came." },
+    { chapter: "Chapter IV", text: "People keep saying time heals wounds.\nBut time is just making me an expert at pretending.\nI can talk through a whole dinner, laugh genuinely at a joke,\nand still be completely mourning your memory under the table." },
+    { chapter: "Chapter V", text: "I hate how my brain constantly formats old memories into burning questions.\nDid you mean it when you told me I was your home?\nOr was I just a convenient shelter while you waited out your own storm?" },
+    { chapter: "Chapter VI", text: "It’s 3:00 AM, and my fingers are hovering over your chat head again.\nYou’re active right now.\nWho are you giving your late-night thoughts to?\nWho gets to hear the voice I used to fall asleep to?" },
+    { chapter: "Chapter VII", text: "I caught myself driving to our old spot this afternoon.\nI sat at the exact table we used to playfully fight over.\nI ordered for one, but my eyes kept shifting to the empty chair across from me,\nwaiting for a presence I know is never coming back." },
+    { chapter: "Chapter VIII", text: "I tried dating someone new last week.\nThey were incredibly kind, they looked at me with genuine care.\nBut when they reached out to hold my hand,\nall I could feel was how their fingers weren't yours.\nIt felt like a crime to let them try." },
+    { chapter: "Chapter IX", text: "They ask me why I'm still heavily stuck in this place.\nThey don't understand that forgetting you means completely killing a version of myself\nthat was actually happy.\nAnd I don't know how to exist without that version." },
+    { chapter: "Chapter X", text: "The terrifying part isn’t that I miss you right now at this second.\nIt’s the sudden, heavy realization that this might be my permanent state.\nWhat if this ache doesn’t have an expiration date?\nWhat if I am formatted to be broken like this forever?" },
+    { chapter: "Chapter XI", text: "I found an old text draft I wrote the night you walked away.\nIt just said, 'Please stay, even if it hurts.'\nIt's pathetic how even after everything you put me through,\nmy heart would still choose your chaos over anyone else's absolute peace." },
+    { chapter: "Chapter XII", text: "You’ve completely moved on, haven't you?\nYou don't stop yourself from laughing when our jokes come up.\nYou don't look at old folders.\nYou completely forgot the person who would have torn down their own walls just to keep you safe." },
+    { chapter: "Chapter XIII", text: "Sometimes I look at the clock and instinctively calculate where you are.\nProbably at work, probably driving home, probably sleeping.\nMy mind is still tracking a life I am no longer allowed to be a part of.\nI am an uninvited spectator to your existence." },
+    { chapter: "Chapter XIV", text: "So this is my final confession to an empty, quiet room:\nI am still terrified of the future because you aren't in it.\nAnd the cruelest truth I have to live with every single day...\nis knowing that what if I actually miss you for the rest of my life?" },
+    { chapter: "Chapter XV", text: "The book closes here, but the thoughts don't.\nYou are the line I can't erase, the relapse I keep welcoming back.\nEven if you never read this, even if you never remember...\nYou are the ghost I'll keep chasing until the ink runs dry." },
+    { chapter: "Chapter XVI", text: "I unblocked your number today just to see your display photo.\nYou look happier. Your smile doesn’t have that heavy tiredness it had when you were trying to fix me.\nI guess I was the anchor dragging down your ship all along." },
+    { chapter: "Chapter XVII", text: "I went to buy groceries and automatically picked up your favorite flavor of chips.\nI walked halfway to the counter before realizing there's no one waiting at home to share them with.\nI put them back on the shelf, feeling like a stranger in my own skin." },
+    { chapter: "Chapter XVIII", text: "Do you ever accidentally say my name?\nOr has your mouth completely unlearned the shape of it?\nBecause every conversation I have feels like an exercise in avoiding topics that lead back to you." },
+    { chapter: "Chapter XIX", text: "The hardest part isn’t losing the big plans we made.\nIt’s losing the small, stupid things.\nThe inside jokes no one else will ever get, the bad impressions we laughed at.\nI am left with an entire language that only you and I spoke, and no one left to talk to." },
+    { chapter: "Chapter XX", text: "I saw someone on the street today who had the exact same jacket you wore on our first anniversary.\nMy heart stopped for a full three seconds.\nI almost ran through the crowd just to check.\nWhen they turned around, it was a complete stranger. The disappointment felt like breaking all over again." },
+    { chapter: "Chapter XXI", text: "My gallery suggested a 'One Year Ago Today' memory slice.\nIt was a video of you laughing while trying to cook dinner.\nYou looked into the camera and said you’d love me forever.\nI want to delete it, but it's the only proof I have left that you actually existed in my life." },
+    { chapter: "Chapter XXII", text: "I wonder if you talk about me to your new friends.\nAm I the 'toxic ex' in your story, or am I just the one you don't even bother mentioning?\nI don't know which title hurts worse." },
+    { chapter: "Chapter XXIII", text: "You left a book on my shelf half-read, with the page corner folded down.\nI haven't moved it. I haven't touched it.\nIt sits there, frozen in time, a permanent monument to the exact moment you decided you were done with our story." },
+    { chapter: "Chapter XXIV", text: "Every song on the radio sounds like a personal attack now.\nEvery lyric about leaving, every melody about staying up late thinking of someone.\nJanine sings about missing someone for the rest of their life,\nand it feels like she read my chest open." },
+    { chapter: "Chapter XXV", text: "I tried changing my room layout to erase the memory of you sitting on the edge of the bed.\nI moved the desk, flipped the sheets, painted the walls.\nBut the space still feels custom-shaped around your absence.\nYou can't redecorate a haunting." },
+    { chapter: "Chapter XXVI", text: "I woke up from a dream where we were completely fine.\nWe were just walking down the street, holding hands like nothing ever broke.\nThe transition back to reality when my eyes opened was so violent,\nit felt like falling off a building." },
+    { chapter: "Chapter XXVII", text: "Are you building a home with someone else now?\nAre you giving them the soft version of yourself that I spent months trying to bring out?\nIt kills me that my destruction was the price you had to pay to become whole for someone else." },
+    { chapter: "Chapter XXVIII", text: "I still have your birthday saved as an emergency passcode for an old account.\nI went to change it today, but my fingers froze over the keyboard.\nEven my muscle memory refuses to let you go." },
+    { chapter: "Chapter XXIX", text: "If you called me right now, screaming that you made a mistake,\nI would drop everything and run back to you.\nEven knowing how it ends. Even knowing how much it burns.\nThat is my absolute downfall: I still prefer your wreckage over my own safety." },
+    { chapter: "Chapter XXX", text: "We are at the end of the pages, but the loop never stops.\nI will close this website, lock my phone, go to sleep, and wake up to do it all over again.\nYou aren't just a chapter anymore.\nYou became the entire book." },
+    { chapter: "Chapter XXXI", text: "I delete my paragraphs in the text box before hitting send.\nIt's a daily ritual of saving myself from the embarrassment of your unbothered 'seen.'\nI write novels for you, but you only deserve my silence now." },
+    { chapter: "Chapter XXXII", text: "Your friends still view my stories occasionally.\nI wonder if they report back to you. I wonder if you ask about me.\nOr if I am just a random name passing through their screens, completely divorced from your current life." },
+    { chapter: "Chapter XXXIII", text: "I rewatched that movie you hated.\nI laughed at the parts you found boring, just to see if I could feel separate from you.\nBut even my disagreement with your taste feels like an intimate conversation we are no longer having." },
+    { chapter: "Chapter XXXIV", text: "There is an old shirt of yours sitting at the bottom of my laundry basket.\nIt doesn't smell like you anymore—just dust and laundry soap.\nThe loss of your scent hurts more than the presence of the fabric." },
+    { chapter: "Chapter XXXV", text: "Thirty-five pages turned down, bleeding quietly into the dark.\nJanine's song loops again, and my mind follows the exact same track.\nIf this is how it ends, then let it be.\nI will love you in the quiet, I will miss you in the relapse, for the rest of my life." }
+];
+
+// Initialize baseline text state
+document.getElementById('messageDisplay').innerText = pages[0].text;
+document.getElementById('textWrapper').classList.add('active');
+</script>
+EOF
