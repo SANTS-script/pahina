@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pahina // Relapse</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght=500;700&family=Playfair+Display:ital,wght=0,500;1,500&family=Quicksand:wght=500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght=0,400;1,400&family=Plus+Jakarta+Sans:wght@400;600&display=swap');
 
         body {
             margin: 0;
             padding: 0;
-            background: #11141a;
+            background: #0b0d11;
             color: #fdf6e2;
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -22,229 +22,261 @@
             position: relative;
         }
 
-        /* Eye-Safe Splash Screen */
+        /* Cinematic Background Atmosphere & Particle Layer */
+        .vignette {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, #06070a 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #particleCanvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* Fluid Splash Screen Gatekeeper */
         #gatekeeper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #0d0f14;
+            background: #06070a;
             z-index: 999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1.4s cubic-bezier(0.25, 1, 0.5, 1), transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .enter-btn {
-            background: rgba(253, 246, 226, 0.05);
-            border: 2px solid #fdf6e2;
+            background: transparent;
+            border: 1px solid rgba(253, 246, 226, 0.2);
             color: #fdf6e2;
-            padding: 16px 40px;
-            font-size: 1rem;
-            font-family: 'Comfortaa', cursive;
-            font-weight: 700;
-            border-radius: 30px;
+            padding: 18px 45px;
+            font-size: 0.9rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .enter-btn:hover {
-            background: #fdf6e2;
-            color: #11141a;
+            border-color: #fdf6e2;
+            background: rgba(253, 246, 226, 0.04);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(253, 246, 226, 0.05);
         }
 
         .hint-text {
-            font-size: 0.85rem;
-            color: #7c8594;
-            margin-top: 18px;
-            letter-spacing: 1px;
+            font-size: 0.75rem;
+            color: #4a525e;
+            margin-top: 24px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: breathe 3s ease-in-out infinite;
         }
 
-        /* High-Contrast Reading Canvas */
-        .book-container {
+        /* Modern, Floating Journal Canvas */
+        .journal-canvas {
             position: relative;
             z-index: 2;
-            width: 88%;
-            max-width: 460px;
-            min-height: 460px;
-            padding: 2.5rem 2rem;
-            background: #1a1d24;
-            border: 1px solid rgba(253, 246, 226, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            width: 85%;
+            max-width: 500px;
+            min-height: 520px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .book-header {
+        .journal-canvas.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .journal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(253, 246, 226, 0.1);
-            padding-bottom: 14px;
-            margin-bottom: 1.5rem;
+            position: relative;
         }
 
-        .chapter-tag {
-            font-family: 'Comfortaa', cursive;
-            font-size: 0.9rem;
-            color: #ff8093;
-            font-weight: 700;
+        .meta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .chapter-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #ff758f;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: emberGlow 4s ease-in-out infinite;
+        }
+
+        .page-counter {
+            font-size: 0.75rem;
+            color: #626b7a;
             letter-spacing: 1px;
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
 
-        .page-number {
-            font-size: 0.85rem;
-            color: #949eb0;
+        /* Pulsing Audio Indicator */
+        .audio-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(253, 246, 226, 0.02);
+            border: 1px solid rgba(253, 246, 226, 0.06);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: #ff758f;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .audio-label {
+            font-size: 0.65rem;
+            color: #8c96a6;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             font-weight: 600;
         }
 
-        /* Text Display Area */
-        .book-content {
+        /* Typography & Smooth Text Transitions */
+        .journal-body {
             flex-grow: 1;
             display: flex;
             align-items: center;
-            min-height: 240px;
+            padding: 40px 0;
         }
 
-        .text-wrapper {
+        .text-stream {
             width: 100%;
             opacity: 0;
-            transform: translateY(6px);
-            transition: all 0.4s ease-in-out;
+            transform: translateY(15px) scale(0.99);
+            filter: blur(4px);
+            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
+                        filter 0.7s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .text-wrapper.active {
+        .text-stream.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0);
         }
 
-        .message-text {
+        .poem-line {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            line-height: 1.8;
+            font-size: 1.35rem;
+            line-height: 1.9;
             color: #fdf6e2;
+            letter-spacing: 0.2px;
             white-space: pre-line;
             margin: 0;
         }
 
-        /* Nav Buttons */
-        .book-footer {
-            margin-top: 2rem;
+        /* Borderless Button Physics */
+        .journal-footer {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            width: 100%;
+            justify-content: center;
+            padding-top: 20px;
         }
 
-        .flip-btn {
-            background: #282c37;
-            border: 1px solid rgba(253, 246, 226, 0.2);
-            color: #fdf6e2;
-            font-size: 0.95rem;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 14px 24px;
-            border-radius: 8px;
-            width: 100%;
-            text-align: center;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-            letter-spacing: 0.5px;
-        }
-
-        .flip-btn:hover {
-            background: #fdf6e2;
-            color: #1a1d24;
-            border-color: #fdf6e2;
-        }
-
-        /* Soundtrack Panel */
-        .soundtrack-bar {
-            background: #11141a;
+        .action-btn {
+            background: rgba(253, 246, 226, 0.01);
             border: 1px solid rgba(253, 246, 226, 0.08);
-            padding: 12px 16px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            color: #8c96a6;
+            font-size: 0.85rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 16px 0;
             width: 100%;
-            box-sizing: border-box;
+            border-radius: 6px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .track-info {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
+        .action-btn:hover {
+            color: #fdf6e2;
+            background: rgba(253, 246, 226, 0.04);
+            border-color: rgba(253, 246, 226, 0.2);
+            letter-spacing: 3px;
         }
 
-        .track-status {
-            font-size: 0.7rem;
-            color: #ff8093;
-            letter-spacing: 1px;
-            font-weight: 700;
+        /* Advanced Core Animations */
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 117, 143, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 117, 143, 0); }
         }
 
-        .track-title {
-            font-size: 0.8rem;
-            color: #949eb0;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin-top: 3px;
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
         }
 
-        audio {
-            height: 24px;
-            width: 100px;
-            opacity: 0.7;
+        @keyframes emberGlow {
+            0%, 100% { text-shadow: 0 0 8px rgba(255, 117, 143, 0.15); opacity: 0.85; }
+            50% { text-shadow: 0 0 18px rgba(255, 117, 143, 0.4); opacity: 1; }
         }
 
-        .vignette {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 60%, #0d0f14 98%);
-            z-index: 1;
-            pointer-events: none;
-        }
+        audio { display: none; }
     </style>
 </head>
 <body>
 
     <div id="gatekeeper">
-        <button class="enter-btn" onclick="openBook()">Open Book</button>
-        <div class="hint-text">Plug in earphones for full immersion.</div>
+        <button class="enter-btn" onclick="openBook()">Open Pages</button>
+        <div class="hint-text">Audio recommended</div>
     </div>
 
     <div class="vignette"></div>
+    <canvas id="particleCanvas"></canvas>
 
-    <div class="book-container">
-        <div class="book-header">
-            <div class="chapter-tag" id="chapterTag">Chapter I</div>
-            <div class="page-number" id="pageNumber">1 / 35</div>
-        </div>
-
-        <div class="book-content">
-            <div class="text-wrapper" id="textWrapper">
-                <p class="message-text" id="messageDisplay">Loading pages...</p>
+    <div class="journal-canvas" id="canvasFrame">
+        <div class="journal-header">
+            <div class="meta-group">
+                <div class="chapter-title" id="chapterTag">Chapter I</div>
+                <div class="page-counter" id="pageNumber">1 // 35</div>
+            </div>
+            <div class="audio-status">
+                <div class="pulse-dot"></div>
+                <div class="audio-label">Janine loop</div>
             </div>
         </div>
 
-        <div class="book-footer">
-            <button class="flip-btn" id="flipBtn" onclick="nextPage()">Turn the page →</button>
-
-            <div class="soundtrack-bar">
-                <div class="track-info">
-                    <span class="track-status">🔂 LOOPING SOUNDTRACK</span>
-                    <span class="track-title">What if I miss you for the rest of my life</span>
-                </div>
-                <audio id="loopPlayer" src="music/JANINE.mp3" loop></audio>
+        <div class="journal-body">
+            <div class="text-stream" id="textWrapper">
+                <p class="poem-line" id="messageDisplay">Loading...</p>
             </div>
+        </div>
+
+        <div class="journal-footer">
+            <button class="action-btn" id="flipBtn" onclick="nextPage()">Next Page —</button>
+            <audio id="loopPlayer" src="music/JANINE.mp3" loop></audio>
         </div>
     </div>
 
@@ -284,28 +316,90 @@
             { chapter: "Chapter XXXII", text: "Your friends still view my stories occasionally.\nI wonder if they report back to you. I wonder if you ask about me.\nOr if I am just a random name passing through their screens, completely divorced from your current life." },
             { chapter: "Chapter XXXIII", text: "I rewatched that movie you hated.\nI laughed at the parts you found boring, just to see if I could feel separate from you.\nBut even my disagreement with your taste feels like an intimate conversation we are no longer having." },
             { chapter: "Chapter XXXIV", text: "There is an old shirt of yours sitting at the bottom of my laundry basket.\nIt doesn't smell like you anymore—just dust and laundry soap.\nThe loss of your scent hurts more than the presence of the fabric." },
-            { chapter: "Chapter XXXV", text: "Fifty pages turned down to thirty-five, bleeding quietly into the dark.\nJanine's song loops again, and my mind follows the exact same track.\nIf this is how it ends, then let it be.\nI will love you in the quiet, I will miss you in the relapse, for the rest of my life." }
+            { chapter: "Chapter XXXV", text: "Thirty-five pages turned down, bleeding quietly into the dark.\nJanine's song loops again, and my mind follows the exact same track.\nIf this is how it ends, then let it be.\nI will love you in the quiet, I will miss you in the relapse, for the rest of my life." }
         ];
 
-        let currentPage = 0;
+       let currentPage = 0;
 
         document.getElementById('messageDisplay').innerText = pages[0].text;
         document.getElementById('textWrapper').classList.add('active');
 
+        // Atmospheric Particle System
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height + canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedY = -(Math.random() * 0.4 + 0.1);
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.y += this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(253, 246, 226, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 40; i++) {
+                particles.push(new Particle())
+
+}
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+        // Control Entry View Transitions
         function openBook() {
             const gatekeeper = document.getElementById('gatekeeper');
+            const canvasFrame = document.getElementById('canvasFrame');
             const loopPlayer = document.getElementById('loopPlayer');
             
             if (loopPlayer) {
                 loopPlayer.play().then(() => {
                     gatekeeper.style.opacity = '0';
-                    setTimeout(() => gatekeeper.style.display = 'none', 1000);
+                    gatekeeper.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        gatekeeper.style.display = 'none';
+                        canvasFrame.classList.add('visible');
+                    }, 1400);
                 }).catch(() => {
                     gatekeeper.style.display = 'none';
+                    canvasFrame.classList.add('visible');
                 });
             }
         }
 
+        // Kinetic Page Navigation
         function nextPage() {
             const wrapper = document.getElementById('textWrapper');
             const chapterTag = document.getElementById('chapterTag');
@@ -313,28 +407,39 @@
             const messageDisplay = document.getElementById('messageDisplay');
             const flipBtn = document.getElementById('flipBtn');
 
-            currentPage++;
+currentPage++;
 
             if (currentPage >= pages.length) {
                 currentPage = 0;
             }
 
+            // Drop down and blur out old scene
+            wrapper.style.transform = 'translateY(-15px) scale(0.98)';
+            wrapper.style.filter = 'blur(4px)';
             wrapper.classList.remove('active');
 
             setTimeout(() => {
                 const data = pages[currentPage];
                 chapterTag.innerText = data.chapter;
-                pageNumber.innerText = `${currentPage + 1} / ${pages.length}`;
+                pageNumber.innerText = `${currentPage + 1} // ${pages.length}`;
                 messageDisplay.innerText = data.text;
 
+                // Return to position from below
+                wrapper.style.transform = 'translateY(15px) scale(0.99)';
+                
+                // Trigger reflow execution for css animation catch
+                void wrapper.offsetWidth;
+
                 wrapper.classList.add('active');
+                wrapper.style.transform = 'translateY(0) scale(1)';
+                wrapper.style.filter = 'blur(0)';
 
                 if (currentPage === pages.length - 1) {
                     flipBtn.innerHTML = "Reopen the pages ↺";
                 } else {
-                    flipBtn.innerHTML = "Turn the page →";
+                    flipBtn.innerHTML = "Next Page —";
                 }
-            }, 400);
+            }, 700);
         }
     </script>
 </body>
